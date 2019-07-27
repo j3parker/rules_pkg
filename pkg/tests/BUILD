@@ -2,20 +2,21 @@
 licenses(["notice"])  # Apache 2.0
 
 load("@rules_pkg//:pkg.bzl", "pkg_deb", "pkg_tar")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
 
-genrule(
-    name = "generate_files",
-    outs = [
-        "etc/nsswitch.conf",
-        "usr/titi",
-    ],
-    cmd = "for i in $(OUTS); do echo 1 >$$i; done",
-)
+[write_file(
+    name = f.replace('/', '-'),
+		out = f,
+		content = [
+			"hello!",
+			"contents for %s in tests" % f,
+		],
+) for f in ["etc/nsswitch.conf", "usr/titi"]]
 
 pkg_tar(
     name = "test_tar_package_dir",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     package_dir = "/package"
 )
@@ -23,7 +24,7 @@ pkg_tar(
 pkg_tar(
     name = "test_tar_package_dir_file",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     package_dir_file = "testdata/test_tar_package_dir_file.txt"
 )
@@ -138,8 +139,8 @@ pkg_deb(
 [pkg_tar(
     name = "test-tar-%s" % ext[1:],
     srcs = [
-        ":etc/nsswitch.conf",
-        ":usr/titi",
+        ":etc-nsswitch.conf",
+        ":usr-titi",
     ],
     build_tar = "@rules_pkg//:build_tar",
     extension = "tar%s" % ext,
@@ -173,7 +174,7 @@ pkg_deb(
 pkg_tar(
     name = "test-tar-strip_prefix-empty",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     strip_prefix = "",
 )
@@ -181,14 +182,14 @@ pkg_tar(
 pkg_tar(
     name = "test-tar-strip_prefix-none",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
 )
 
 pkg_tar(
     name = "test-tar-strip_prefix-etc",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     strip_prefix = "etc",
 )
@@ -196,7 +197,7 @@ pkg_tar(
 pkg_tar(
     name = "test-tar-strip_prefix-dot",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     strip_prefix = ".",
 )
@@ -204,7 +205,7 @@ pkg_tar(
 pkg_tar(
     name = "test-tar-files_dict",
     files = {
-        ":etc/nsswitch.conf": "not-etc/mapped-filename.conf",
+        ":etc-nsswitch.conf": "not-etc/mapped-filename.conf",
     },
 )
 
@@ -229,7 +230,7 @@ pkg_tar(
 pkg_tar(
     name = "test-tar-mtime",
     srcs = [
-        ":etc/nsswitch.conf",
+        ":etc-nsswitch.conf",
     ],
     mtime = 946684740,  # 1999-12-31, 23:59
     portable_mtime = False,

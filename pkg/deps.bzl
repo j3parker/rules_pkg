@@ -33,6 +33,16 @@ def rules_pkg_dependencies():
         build_file = "@abseil_py//third_party:six.BUILD"
     )
 
+    _maybe(
+        http_archive,
+        name = "bazel_skylib",
+        urls = [
+            "https://github.com/bazelbuild/bazel-skylib/archive/0.9.0.tar.gz",
+        ],
+        sha256 = "9245b0549e88e356cd6a25bf79f97aa19332083890b7ac6481a2affb6ada9752",
+				strip_prefix = "bazel-skylib-0.9.0",
+    )
+
 
 def rules_pkg_register_toolchains():
     pass
